@@ -22,18 +22,6 @@ public class AdminServiceImpl {
 
 
 
-    @PostConstruct
-    public void createAdminAccount() {
-        User adminAccount = userRepository.findByRole(UserRole.ADMIN);
-        if (adminAccount == null) {
-            User admin = new User();
-            admin.setRole(UserRole.ADMIN);
-            admin.setEmail("admin@test.com");
-            admin.setName("admin");
-            admin.setPassword(new BCryptPasswordEncoder().encode("admin"));
-            userRepository.save(admin);
-            System.out.println("Admin created successfully.");
-        }
-    }
+
     }
 

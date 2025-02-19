@@ -45,10 +45,12 @@ public class JwtUtil {
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
 
-    public static String generateToken(String username) {
+    public static String generateToken(String username, String role) {
         Map<String, Object> claims = new HashMap<>();
+        claims.put("role", role); // Ajout du rôle dans les claims
         return createToken(claims, username);
     }
+
 
     private static String createToken(Map<String, Object> claims, String userName) {
         return Jwts
@@ -56,9 +58,13 @@ public class JwtUtil {
                 .setClaims(claims)
                 .setSubject(userName)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 30))
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 2))  // 2 heures
                 .signWith(getSignKey(), SignatureAlgorithm.HS256).compact();
     }
+    public String extractUserRole(String token) {
+        return extractClaim(token, claims -> claims.get("role", String.class));
+    }
+
 
     private static Key getSignKey() {
         byte[] keyBytes = Decoders.BASE64.decode(SECRET);

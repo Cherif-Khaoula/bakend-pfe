@@ -67,7 +67,9 @@ public class AuthentificationController {
             return null;
         }
 
-        final String jwt = jwtUtil.generateToken(userDetails.getUsername());
+        final String role = userDetails.getAuthorities().isEmpty() ? "USER" : userDetails.getAuthorities().iterator().next().getAuthority();
+        final String jwt = jwtUtil.generateToken(userDetails.getUsername(), role);
+
 
         // Définition des headers avant d'écrire dans la réponse
         response.setHeader("Access-Control-Expose-Headers", HEADER_STRING);
@@ -76,8 +78,6 @@ public class AuthentificationController {
 
         return new AuthentificationResponse(jwt ,optionalUser.get().getId(), optionalUser.get().getRole() ,optionalUser.get().getName());
     }
-
-
 
     /**
      * Récupérer tous les utilisateurs (Accessible uniquement aux administrateurs).
@@ -117,7 +117,6 @@ public class AuthentificationController {
         return userRepository.save(user);
     }
 
-
     /**
      * Mettre à jour un utilisateur existant (Accessible uniquement aux administrateurs).
      */
@@ -145,5 +144,4 @@ public class AuthentificationController {
                 .orElseThrow(() -> new RuntimeException("User not found"));
         userRepository.delete(user);
     }
-
 }
